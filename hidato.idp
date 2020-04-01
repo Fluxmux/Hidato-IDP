@@ -32,18 +32,18 @@ theory T : V {
   !r[Rij] k[Kolom] g[Getal]: Gegeven(r, k, g) => Oplossing(r, k) = g.
 
   // Voor elk getal bestaat er een ander naburig getal dat 1 minder is dan het eerste getal
-  !r1, k1, r2, k2: (Oplossing(r1, k1) - Oplossing(r2, k2) = 1 & Oplossing(r1,k1) ~= 1 & Oplossing(r1, k1) - Oplossing(r2, k2)>0) => Buur(r1, k1, r2, k2).
+  !r1[Rij], k1[Kolom], r2[Rij], k2[Kolom]: (Oplossing(r1, k1) - Oplossing(r2, k2) = 1 & Oplossing(r1,k1) ~= 1 & Oplossing(r1, k1) - Oplossing(r2, k2)>0) => Buur(r1, k1, r2, k2).
 
+  // Elk getal mag maar een keer voorkomen
   !r1[Rij], k1[Kolom], r2[Rij], k2[Kolom]: ~(r1 = r2 & k1 = k2) => Oplossing(r1, k1) ~= Oplossing(r2, k2).
 
   {
-    !r1, k1, r2, k2: Buur(r1, k1, r2, k2) <-
-    ~(r1 = r2 & k1 = k2) & abs(r1 - r2) < 2 & abs(k1 - k2) < 2.
+    // Consecutieve getallen zijn buren van elkaar
+    !r1[Rij], k1[Kolom], r2[Rij], k2[Kolom]: Buur(r1, k1, r2, k2) <- ~(r1 = r2 & k1 = k2) & abs(r1 - r2) < 2 & abs(k1 - k2) < 2.
   }
-
 }
 
 procedure main() {
-  stdoptions.nbmodels = 10
+  stdoptions.nbmodels = 0
   printmodels(modelexpand(T, S))
 }
