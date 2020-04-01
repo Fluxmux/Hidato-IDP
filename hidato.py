@@ -23,6 +23,7 @@ def setup(s):
                 if val == 1:
                     start = (r + 1, c + 1)
     given.sort()
+    
 
 def solve(r, c, n, next=0):
     if n > given[-1]:
@@ -53,14 +54,11 @@ def print_board():
         print("".join(form % d.get(c, str(c)) for c in r[1:-1]))
 
 hi = """\
-__ 33 35 __ __  .  .  .
-__ __ 24 22 __  .  .  .
-__ __ __ 21 __ __  .  .
-__ 26 __ 13 40 11  .  .
-27 __ __ __  9 __  1  .
- .  . __ __ 18 __ __  .
- .  .  .  . __  7 __ __
- .  .  .  .  .  .  5 __"""
+13 __ 15 __ __
+__ 25 1  2  18
+__ 24 __ 21 __
+10 __ 22 4  20
+9  __ __ 6  __"""
 
 setup(hi)
 print_board()

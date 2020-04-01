@@ -1,8 +1,8 @@
 /*
 * Stijn De Bels en Felix Lerner
 * Description: Hidato ~ The goal is to fill the grid with a series
-                        of consecutive numbers adjacent to each other
-                        vertically, horizontally, or diagonally.
+*                       of consecutive numbers adjacent to each other
+*                       vertically, horizontally, or diagonally.
 */
 
 vocabulary V {
@@ -11,7 +11,7 @@ vocabulary V {
   type Getal isa nat
   Gegeven(Rij,Kolom,Getal)
   Oplossing(Rij, Kolom): Getal
-  Buur(Getal, Getal)
+  Buur(Rij, Kolom, Rij, Kolom)
 }
 
 structure S : V {
@@ -19,44 +19,31 @@ structure S : V {
   Kolom = {1..5}
   Getal = {1..25}
   Gegeven = { 1,1,13; 1,3,15;
-             2,2,25; 2,3,1;
-             2,4,2;  2,5,18;
-             3,2,24; 3,4,21;
-             4,1,10; 4,3,22;
-             4,4,4;  1,5,9;
-             5,4,20; 4,5,6; }
-
-   //Buur = {(25,24); (25,1);(1,)}
+              2,2,25; 2,3,1;
+              2,4,2;  2,5, 18;
+              3,2,24; 3, 4,21;
+              4,1,10; 4,3,22;
+              4,4,4;  5,1,9;
+              4,5,20; 5,4,6; }
 }
 
 theory T : V {
-
-// Elke gegeven oplossing is ook een oplossing
+  // Elke gegeven oplossing is ook een oplossing
   !r[Rij] k[Kolom] g[Getal]: Gegeven(r, k, g) => Oplossing(r, k) = g.
 
   // Voor elk getal bestaat er een ander naburig getal dat 1 minder is dan het eerste getal
-  //!getal1: ?getal2: (getal1=getal2-1  & getal1>1) => Buur(getal1,getal2).
-  // Vierkant vullen
+  !r1, k1, r2, k2: (Oplossing(r1, k1) - Oplossing(r2, k2) = 1 & Oplossing(r1,k1) ~= 1 & Oplossing(r1, k1) - Oplossing(r2, k2)>0) => Buur(r1, k1, r2, k2).
+
+  !r1[Rij], k1[Kolom], r2[Rij], k2[Kolom]: ~(r1 = r2 & k1 = k2) => Oplossing(r1, k1) ~= Oplossing(r2, k2).
 
   {
-      !r1, k1, r2, k2: Vierkant(r1, k1, r2, k2) <-
-        ~(r1 = r2 & k1 = k2) &
-        //(r1/3 = r2/3)
-        r1 - (r1-1)%3 = r2 - (r2-1)%3 &
-        //stel r1=5, r2=6, k1=1, k2=2
-        //5-(5-1)%3 = 4
-        //6-(6-1)%3 = 4
-        k1 - (k1-1)%3 = k2 - (k2-1)%3.
+    !r1, k1, r2, k2: Buur(r1, k1, r2, k2) <-
+    ~(r1 = r2 & k1 = k2) & abs(r1 - r2) < 2 & abs(k1 - k2) < 2.
   }
-
-
-  // De puzzel moet volledig ingevuld worden
-  !r[Rij] g[Getal]: ?1k[Kolom]: Oplossing(r, k) = g.
-  !k[Kolom] g[Getal]: ?1r[Rij]: Oplossing(r, k) = g.
 
 }
 
 procedure main() {
-  stdoptions.nbmodels = 0
-  printmodels(modelexpand(T,S))
+  stdoptions.nbmodels = 10
+  printmodels(modelexpand(T, S))
 }
